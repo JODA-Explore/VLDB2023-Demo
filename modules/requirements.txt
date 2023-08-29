@@ -1,0 +1,4 @@
+vaderSentiment
+fasttext
+psycopg2-binary
+bloom_filter

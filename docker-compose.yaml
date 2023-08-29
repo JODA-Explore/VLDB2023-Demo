@@ -1,0 +1,32 @@
+version: '3'
+services:
+  joda:
+    container_name: joda
+    restart: always
+    ports:
+      - "5632:5632"
+    volumes:
+      - ./data:/data:rw  # Optional directory, if access to local datasets is desired.
+      - /etc/localtime:/etc/localtime:ro
+    image: joda:vldb2023
+    build:
+      context: .
+      dockerfile: docker/joda/Dockerfile
+  joda-web:
+    container_name: joda-web
+    restart: always
+    ports:
+      - "8080:8080"
+    image: joda-web:vldb2023
+    build:
+      context: .
+      dockerfile: docker/joda-web/Dockerfile
+    depends_on:
+      - joda
+    command: "http://joda:5632"
+  db:
+    container_name: demo-db
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres

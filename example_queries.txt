@@ -1,0 +1,30 @@
+# Import Twitter
+LOAD Twitter FROM FILES "/data/twitter"  
+
+# Add import datetime
+LOAD Twitter AS (*),('/import':CURRENTDATE())
+
+
+#
+# Sentiment Analysis
+#
+
+# Infer tweet sentiment
+LOAD Twitter AS *,('/sentiment':SENTIMENT('/text')) STORE Sentiment
+
+# AVG Tweet Sentiment per user
+LOAD Sentiment AGG ('' : GROUP AVGSENTIMENT('/sentiment') AS sentiment BY '/user/screen_name') STORE AVGSentiment
+
+LOAD AVGSentiment AS ('':FLATTEN('')) STORE TMP; 
+LOAD TMP AS ('/name':'/group'), ('/sentiment':'/sentiment') STORE AS WRITESQL "postgresql://postgres:postgres@demo-db/joda user_sentiment"
+
+#
+# Bounding Box
+#
+
+# Get all Geographical Tweets
+LOAD Twitter CHOOSE (EXISTS('/geo') && !ISNULL('/geo')) STORE TwitterGeo;
+
+# Calculate overall BBox
+LOAD TwitterGeo AGG ('': GEOBBOX('/geo/coordinates'));
+
