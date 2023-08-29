@@ -2,7 +2,7 @@
 LOAD Twitter FROM FILES "/data/twitter"  
 
 # Add import datetime
-LOAD Twitter AS (*),('/import':CURRENTDATE())
+LOAD Twitter AS *,('/import':CURRENTDATE())
 
 
 #

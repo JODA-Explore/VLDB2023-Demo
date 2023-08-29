@@ -14,8 +14,7 @@ def aggregate(state, arg1):
     state[0] += 1
   elif arg1 == "Negative":
     state[0] -= 1
-  else:
-    state[0] += 0
+
   # Count
   state[1] += 1
   return state
